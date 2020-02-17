@@ -1,6 +1,6 @@
 // app.js - A proxy for a Knative service.
 // Necessary because XHRs can't call Knative services as far as I can tell.
-// Written by Doug Tidwell, dtidwell@redhat.com 
+// Written by Doug Tidwell, dtidwell@redhat.com
 
 // This code calls the overlay image function for Coderland. Given
 // a JSON structure that contains base64-encoded image data and other
@@ -34,8 +34,9 @@ reassureTheClient = function(req, res) {
 }
 
 // This implements the POST verb.
-modifyImage = function(req, res){
-    //console.log(`We\'re in the proxy: ${req.body.greeting}`);
+pub_message = function(req, res){
+    console.log(req.body);
+    //console.log(`We\'re in the proxy: ${req.body.json()}`);
 
     // We obviously need to know the URL of the service as well as
     // the value for the HOST header. If there's an environment
@@ -50,8 +51,8 @@ modifyImage = function(req, res){
         headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
-            'Topic' : 'test1',
-            'Host_kafka' : '211.252.86.33:31009',
+            'topic' : 'test1',
+            'host_kafka' : '211.252.86.33:31009',
             'Host': headerValue
         },
         body: JSON.stringify(req.body)
@@ -69,7 +70,7 @@ modifyImage = function(req, res){
 
 // Define the methods for the POST and OPTIONS verbs
 app.route('/iphone')
-    .post(modifyImage)
+    .post(pub_message)
     .options(reassureTheClient);
 
 app.listen(port);
