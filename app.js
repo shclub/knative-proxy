@@ -14,17 +14,17 @@ var nodeFetch = require('node-fetch');
 
 // Set a limit of 5MB for the JSON data. Obviously a high-res camera
 // could generate some really big files...this limit seems to work
-// for us. 
+// for us.
 app.use(bodyParser.json({limit: '5mb'}));
 
 // Use port 8888 by default, but the environment variable if it's there
-port = process.env.PORT || 8888;
+port =  8888;
 
 // This implements the HTTP OPTIONS verb. Handles the CORS stuff.
 // The client app calls OPTIONS first to get these headers, then
 // it calls the POST method if the CORS bits work.
 // Also notice that the Allow-Origin host is whoever asked us
-// the question (req.header('Origin')). 
+// the question (req.header('Origin')).
 reassureTheClient = function(req, res) {
     res.header('Access-Control-Allow-Origin', req.header('Origin'));
     res.header('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -33,30 +33,30 @@ reassureTheClient = function(req, res) {
     res.sendStatus(200);
 }
 
-// This implements the POST verb. 
+// This implements the POST verb.
 modifyImage = function(req, res){
-    console.log(`We\'re in the proxy: ${req.body.greeting}`);
+    //console.log(`We\'re in the proxy: ${req.body.greeting}`);
 
     // We obviously need to know the URL of the service as well as
     // the value for the HOST header. If there's an environment
     // variable for these values, that's what we use; otherwise
-    // we've got hardcoded values instead. 
-    const url = process.env.PROXY_URL ||
-          'http://192.168.99.100:31380/overlayImage';
-    const headerValue = process.env.PROXY_HOST ||
-          'overlayimage.knativetutorial.example.com';
-    
+    // we've got hardcoded values instead.
+    const url = 'http://211.252.86.33:31380/iphone';
+    const headerValue = 'pub-python.jake.211.252.86.33.xip.io';
+
     nodeFetch(url, {
         timeout: 90000,
         method: 'post',
         headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
+            'Topic' : 'test1',
+            'Host_kafka' : '211.252.86.33:31009',
             'Host': headerValue
         },
         body: JSON.stringify(req.body)
     })
-
+//    console.log(`Knative body ${body}...`);
     // Handle the requests via promises here
     .then(response => response.json())
     .then((responseJson) => {
@@ -68,7 +68,7 @@ modifyImage = function(req, res){
 };
 
 // Define the methods for the POST and OPTIONS verbs
-app.route('/overlayImage')
+app.route('/iphone')
     .post(modifyImage)
     .options(reassureTheClient);
 
